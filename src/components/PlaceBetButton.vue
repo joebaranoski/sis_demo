@@ -31,7 +31,8 @@ export default {
 
 <style scoped>
 .place-bet-container {
-  margin-top: 40px;
+  padding: 20px 0 40px;
+  box-shadow: 0px -1px 12px rgba(24, 24, 41, 0.2);
 }
 
 .place-bet {

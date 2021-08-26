@@ -9,7 +9,11 @@
       v-else
       :class="{ 'wager-box': true, 'wager-box-loaded': showWagerBoxes }"
     >
-      <span class="balance" style="align-self: flex-end">BALANCE: $240.00</span>
+      <span
+        class="balance"
+        style="align-self: flex-end; margin-right: 20px; margin-bottom: 5px;"
+        >BALANCE: $240.00</span
+      >
       <BetOutcome />
       <WagerFields
         @handleWagerUpdate="updateWager"
@@ -202,7 +206,10 @@ export default {
   display: flex;
   flex-direction: column;
   opacity: 0;
+  justify-content: space-between;
   transition: opacity 0.25s;
+  height: 100%;
+  width: 100%;
 }
 
 .wager-box-loaded {
