@@ -5,8 +5,9 @@
       type="text"
       id="wager"
       name="wager"
-      v-model="wager"
-      @blur="formatInput"
+      :value="wager"
+      @input="$emit('handleWagerUpdate', $event.target.value)"
+      @blur="$emit('handleWagerBlur')"
       placeholder="$0.00"
     />
     <input
@@ -21,45 +22,22 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
-
-/** Shamelessly stolen from internet */
-function isNumeric(str) {
-  if (typeof str != 'string') return false; // we only process strings!
-  return (
-    !isNaN(str) && !isNaN(parseFloat(str)) // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
-  ); // ...and ensure strings of whitespace fail
-}
-
 export default {
   name: 'WagerFields',
-  setup() {
-    const wager = ref('');
-    const payout = computed(() => {
-      if (!wager.value) {
-        return '$0.00';
-      }
-
-      const wagerNum = wager.value.replace('$', '');
-
-      if (!isNumeric(wagerNum)) {
-        return '$0.00';
-      }
-
-      return `$${(Number(wagerNum) * 1.666).toFixed(2)}`;
-    });
-
-    const formatInput = () => {
-      const wagerNum = wager.value.replace('$', '');
-
-      if (isNumeric(wagerNum)) {
-        wager.value = `$${Number(wagerNum).toFixed(2)}`;
-      }
-    };
-
-    return { payout, formatInput, wager };
+  props: {
+    payout: String,
+    wager: String,
   },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+input {
+  height: 48px;
+  background-color: #f5f5f5;
+}
+
+input:focus {
+  outline-color: #01ebff;
+}
+</style>

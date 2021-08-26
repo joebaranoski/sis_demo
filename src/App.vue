@@ -58,4 +58,11 @@ body {
   text-align: center;
   display: flex;
 }
+
+.button {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
+  font-size: 12px;
+}
 </style>

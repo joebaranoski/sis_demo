@@ -11,14 +11,18 @@
     >
       <span class="balance" style="align-self: flex-end">BALANCE: $240.00</span>
       <BetOutcome />
-      <WagerFields />
-      <button @click="$emit('placeBet')" disabled>
-        <span>Place $10.00 Bet</span>
-        <span>To Return $16.67</span>
-      </button>
-      <span>
-        Please Note: With wager singles you can only place one bet at a time.
-      </span>
+      <WagerFields
+        @handleWagerUpdate="updateWager"
+        @handleWagerBlur="formatInput"
+        :payout="payout"
+        :wager="wager"
+      />
+      <PlaceBetButton
+        @placeBet="$emit('placeBet')"
+        :canPlaceBet="canPlaceBet"
+        :payout="payout"
+        :wager="wager"
+      />
     </div>
   </div>
 </template>
@@ -27,13 +31,23 @@
 import { computed, ref } from 'vue';
 import BetOutcome from './BetOutcome.vue';
 import PickCount from './PickCount.vue';
+import PlaceBetButton from './PlaceBetButton.vue';
 import WagerFields from './WagerFields.vue';
+
+/** Shamelessly stolen from internet */
+export function isNumeric(str) {
+  if (typeof str != 'string') return false; // we only process strings!
+  return (
+    !isNaN(str) && !isNaN(parseFloat(str)) // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+  ); // ...and ensure strings of whitespace fail
+}
 
 export default {
   name: 'Betslip',
   components: {
     BetOutcome,
     PickCount,
+    PlaceBetButton,
     WagerFields,
   },
   props: {
@@ -42,6 +56,7 @@ export default {
   setup(props) {
     const betslipOpen = ref(false);
     const showWagerBoxes = ref(false);
+    const wager = ref('');
 
     const handleToggleBetslip = () => {
       if (!betslipOpen.value) {
@@ -63,6 +78,36 @@ export default {
       handleToggleBetslip();
     };
 
+    const updateWager = (updatedWager) => {
+      wager.value = updatedWager;
+    };
+
+    const formatInput = () => {
+      if (isNumeric(wagerNum.value)) {
+        wager.value = `$${Number(wagerNum.value).toFixed(2)}`;
+      }
+    };
+
+    const wagerNum = computed(() => {
+      return wager.value.replace('$', '');
+    });
+
+    const payout = computed(() => {
+      if (!wager.value) {
+        return '$0.00';
+      }
+
+      if (!isNumeric(wagerNum.value)) {
+        return '$0.00';
+      }
+
+      return `$${(Number(wagerNum.value) * 1.666).toFixed(2)}`;
+    });
+
+    const canPlaceBet = computed(() => {
+      return Boolean(isNumeric(wagerNum.value) && Number(wagerNum.value > 0));
+    });
+
     const classNames = computed(() => ({
       betslip: true,
       open: betslipOpen.value,
@@ -72,10 +117,15 @@ export default {
 
     return {
       betslipOpen,
+      canPlaceBet,
       classNames,
       handleBetslipClick,
       handleToggleBetslip,
+      formatInput,
+      payout,
       showWagerBoxes,
+      updateWager,
+      wager,
     };
   },
 };
@@ -92,6 +142,9 @@ export default {
   border-radius: 15px 15px 0 0;
   transition: height 0.25s;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .open {

@@ -5,7 +5,12 @@
       :buttonsHighlighted="buttonsHighlighted"
       @placeBet="placeBet"
     />
-    <PlacedBetSummary v-else :betId="betId" :placedTime="placedTime" />
+    <PlacedBetSummary
+      v-else
+      :betId="betId"
+      :placedTime="placedTime"
+      @handleCloseBetSummary="returnToBetslip"
+    />
   </div>
 </template>
 
@@ -39,7 +44,11 @@ export default {
       });
     };
 
-    return { betId, betPlaced, placeBet, placedTime };
+    const returnToBetslip = () => {
+      betPlaced.value = false;
+    };
+
+    return { betId, betPlaced, placeBet, placedTime, returnToBetslip };
   },
 };
 </script>
